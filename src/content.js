@@ -45,7 +45,9 @@ const outerAxis = [
     en: 'Hall of Supreme Harmony',
     type: '外朝三大殿',
     anchor: [-166, 41, -2265],
-    offset: [87, 57, 112],
+    // Frame the roof, the three terraces and the foot of the imperial ramp together.
+    target: [-160, 10, -2228],
+    offset: [45, 62, 133],
     form: '沿石阶望去，三层汉白玉台基托起重檐庑殿顶。殿前开阔的广场为朝列和仪仗留出了空间。',
     use: '太和殿承担国家大典。明清皇帝在此举行登极等仪式，在元旦、冬至、万寿节接受朝贺。',
     year: '1667',

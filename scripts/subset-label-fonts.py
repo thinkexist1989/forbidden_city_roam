@@ -16,7 +16,8 @@ args = parser.parse_args()
 
 catalog = subprocess.check_output([
     "node", "--input-type=module", "-e",
-    "import {places} from './src/content.js'; console.log(JSON.stringify(places.map(p => p.name)));"
+    "import {places} from './src/content.js'; import {features} from './src/features.js'; "
+    "console.log(JSON.stringify([...places,...features].map(p => p.name)));"
 ], cwd=root, text=True)
 labels = "".join(json.loads(catalog)) + "当前视点全景漫游紫禁城宫城图志外朝故宮"
 for source, output in [(args.kai, "palace-kai.ttf"), (args.song, "palace-song.woff2")]:
@@ -32,4 +33,5 @@ for source, output in [(args.kai, "palace-kai.ttf"), (args.song, "palace-song.wo
         "Distributed under the Arphic Public License; see ARPHICPL.TXT.", 10, 3, 1, 0x409)
     if output.endswith(".woff2"):
         font.flavor = "woff2"
-    font.save(root / "public" / "media" / output)
+    directory = "src" if output == "palace-kai.ttf" else "public"
+    font.save(root / directory / "media" / output)

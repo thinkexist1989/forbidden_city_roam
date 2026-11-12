@@ -1,6 +1,7 @@
 import * as T from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {blendOverview, createOverviewCamera, fitOverview} from './overview.js';
 
 const vector = xyz => new T.Vector3(...xyz);
 const homeEye = vector([-114, 85, -2116]);
@@ -8,7 +9,7 @@ const homeTarget = vector([-154, 16, -2285]);
 const axis = vector([-166, 0, -2280]);
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export async function createScene(canvas, onView, onProgress, onFailure) {
+export async function createScene(canvas, onView, onProgress, onFailure, overviewInsets, onCameraChange) {
   const renderer = new T.WebGLRenderer({canvas, antialias: true, powerPreference: 'high-performance'});
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
   renderer.shadowMap.enabled = true;
@@ -22,6 +23,10 @@ export async function createScene(canvas, onView, onProgress, onFailure) {
   scene.background = new T.Color(0xbdaf99);
   scene.fog = new T.FogExp2(0xc2b8a1, 0.00105);
   const camera = new T.PerspectiveCamera(46, 1, 1, 9500);
+  const mapCamera = createOverviewCamera();
+  const movingCamera = camera.clone();
+  let overviewActive = false;
+  let mapProgress = 0, lastMapFrame = 0;
   camera.position.copy(homeEye);
   const controls = new OrbitControls(camera, canvas);
   controls.target.copy(homeTarget);
@@ -125,6 +130,14 @@ export async function createScene(canvas, onView, onProgress, onFailure) {
   }
   function draw(now) {
     frame = 0;
+    const destination = Number(overviewActive);
+    if (mapProgress !== destination) {
+      const step = Math.max(0, now - lastMapFrame) / 850;
+      mapProgress = reduced() ? destination : overviewActive ? Math.min(1, mapProgress + step) : Math.max(0, mapProgress - step);
+      lastMapFrame = now;
+    }
+    const moving = mapProgress > 0 && mapProgress < 1;
+    controls.enabled = exploring && !overviewActive && !moving;
     const animation = flight;
     if (animation) {
       const t = Math.min(1, (now - animation.start) / animation.duration);
@@ -138,32 +151,43 @@ export async function createScene(canvas, onView, onProgress, onFailure) {
     controls.target.x = T.MathUtils.clamp(controls.target.x, -675, 320);
     controls.target.z = T.MathUtils.clamp(controls.target.z, -3500, -900);
     controls.target.y = T.MathUtils.clamp(controls.target.y, 0, 70);
-    const changed = controls.update();
+    const changed = (!mapProgress || animation) && controls.update();
     if (dirty || changed || animation) {
       dirty = false;
-      const distance = camera.position.distanceTo(controls.target);
-      scene.fog.density = 0.00105 * Math.min(1, 310 / distance);
-      renderer.render(scene, camera);
-      onView(camera, controls.getAzimuthalAngle(), distance);
+      const t = mapProgress * mapProgress * (3 - 2 * mapProgress);
+      if (moving) blendOverview(movingCamera, camera, controls.target, mapCamera, t);
+      const activeCamera = moving ? movingCamera : mapProgress === 1 ? mapCamera : camera;
+      const distance = camera.position.distanceTo(controls.target) * (1 - t) + mapCamera.position.y * t;
+      scene.fog.density = (1 - t) * 0.00105 * Math.min(1, 310 / distance);
+      renderer.render(scene, activeCamera);
+      onView(activeCamera, (1 - t) * controls.getAzimuthalAngle(), distance, mapProgress !== destination);
     }
     if (animation && !flight)
       animation.arrive?.();
-    if (changed || flight)
+    if (changed || flight || mapProgress !== destination)
       requestFrame();
   }
 
   function resize() {
+    onCameraChange();
     camera.aspect = canvas.clientWidth / Math.max(1, canvas.clientHeight);
     camera.updateProjectionMatrix();
     renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+    if (overviewActive || mapProgress > 0) fitMap();
     requestFrame();
+  }
+  function fitMap() {
+    const {top, bottom} = overviewInsets();
+    const room = fitOverview(mapCamera, canvas.clientWidth, canvas.clientHeight, top, bottom);
+    canvas.parentElement.style.setProperty('--map-side-room', room + 'px');
+    canvas.parentElement.classList.toggle('compact-map', room < 220 || canvas.clientHeight < 540);
   }
   function travel(eye, target, ms, lift = 0, arrive) {
     // Drain any residual orbit damping before recording the next camera path.
     controls.enableDamping = false;
     controls.update();
     controls.enableDamping = true;
-    controls.enabled = exploring;
+    controls.enabled = exploring && !mapProgress && !overviewActive;
     flight = null;
     if (reduced() || ms === 0) {
       camera.position.copy(eye);
@@ -186,7 +210,10 @@ export async function createScene(canvas, onView, onProgress, onFailure) {
     requestFrame();
   }
 
-  controls.addEventListener('change', requestFrame);
+  controls.addEventListener('change', () => {
+    onCameraChange();
+    requestFrame();
+  });
   controls.addEventListener('start', () => {
     flight = null;
   });
@@ -220,18 +247,28 @@ export async function createScene(canvas, onView, onProgress, onFailure) {
       flight = null;
     },
     focus(place, arrive) {
-      const target = vector(place.anchor);
-      target.y *= .40;
+      const target = vector(place.target ?? place.anchor);
+      if (!place.target && !place.parentId) target.y *= .40;
       const eye = target.clone().add(vector(place.offset));
-      travel(eye, target, 950, 18, arrive);
+      travel(eye, target, 950, place.parentId ? 5 : 18, arrive);
     },
-    overview() {
-      const distance = Math.max(1, 0.85 / camera.aspect);
-      const target = vector([-166, 3, -2360]);
-      // A landscape tablet has room for the long city axis from left to right.
-      const offset = camera.aspect > 1.2 ? [410, 1150, 95] : [55, 1410, 290];
-      const eye = target.clone().add(vector(offset).multiplyScalar(distance));
-      travel(eye, target, 1100, 35);
+    overview(active) {
+      flight = null;
+      overviewActive = active;
+      lastMapFrame = performance.now();
+      controls.enabled = false;
+      if (active) {
+        // Discard any pending damping without moving the saved free view.
+        const eye = camera.position.clone(), target = controls.target.clone();
+        controls.enableDamping = false;
+        controls.update();
+        camera.position.copy(eye);
+        controls.target.copy(target);
+        controls.update();
+        controls.enableDamping = true;
+        fitMap();
+      }
+      requestFrame();
     },
     zoom(factor) {
       const diff = camera.position.clone().sub(controls.target);

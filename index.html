@@ -7,6 +7,7 @@
   <meta name="description" content="从太和殿全景开始，漫游紫禁城三维模型，探访外朝建筑与六百年宫城历史。">
   <link rel="stylesheet" href="./src/style.css">
   <link rel="preload" href="./media/palace-song.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./src/media/palace-kai.ttf" as="font" type="font/ttf" crossorigin>
   <title>漫游紫禁城 · 宫城图志</title>
   <link rel="icon" type="image/svg+xml" href="./media/seal.svg">
 </head>
@@ -44,18 +45,35 @@
     <button id="enter" class="entry-btn"><i data-icon="compass"></i><span>开始漫游</span><i data-icon="arrow"></i></button>
     <div id="loading" role="status">正在载入宫城…</div>
   </section>
-  <div class="vantage">
+  <div class="vantage" hidden>
     <div class="vantage-caption"><i data-icon="pin"></i><span>当前视点</span></div>
-    <strong id="view-name">太和殿全景</strong><em id="view-en" lang="en">Hall of Supreme Harmony</em>
+    <strong id="view-name" class="place-name"></strong><em id="view-en" lang="en"></em>
   </div>
   <div id="bearing" class="bearing" aria-label="指北针"><span>北</span><div class="dial"><div class="needle"></div></div></div>
+  <aside class="map-facts" aria-label="紫禁城概览">
+    <section class="map-note">
+      <h2>宫城格局</h2>
+      <dl><dt>城墙内占地</dt><dd>约 <strong>72</strong> 万平方米</dd>
+      <dt>宫殿与房屋</dt><dd>约 <strong>9,000</strong> 间</dd></dl>
+      <p>从南端的午门向北看，外朝三大殿与内廷后三宫依次排列在中轴线上。</p>
+      <a href="https://www.dpm.org.cn/forum_detail/99719.html" target="_blank" rel="noopener noreferrer">故宫博物院 · 宫城建构</a>
+    </section>
+    <section class="map-note">
+      <h2>明清沿革</h2>
+      <ol><li><time>1406</time>明永乐四年，开始营建北京宫殿。</li>
+      <li><time>1420</time>紫禁城建成，此后明清两代共 24 位皇帝在此执政。</li>
+      <li><time>1925</time>故宫博物院成立，宫门向公众开放。</li></ol>
+      <a href="https://www.dpm.org.cn/subject_600/buildingdetails/253789.html" target="_blank" rel="noopener noreferrer">故宫博物院 · 紫禁城建成</a>
+    </section>
+  </aside>
+  <button id="map-info" aria-controls="panel" aria-expanded="false">宫城概览</button>
   <nav class="explore-nav" aria-label="漫游工具" hidden>
-    <button id="index" aria-label="建筑图录" title="建筑图录"><i data-icon="atlas"></i></button>
-    <button id="history" aria-label="历史年表" title="历史年表"><i data-icon="clock"></i></button>
+    <button id="index" aria-label="建筑图录" title="建筑图录" aria-controls="panel" aria-expanded="false"><i data-icon="atlas"></i></button>
+    <button id="history" aria-label="历史年表" title="历史年表" aria-controls="panel" aria-expanded="false"><i data-icon="clock"></i></button>
     <b aria-hidden="true"></b>
     <button id="labels" aria-label="建筑光点" title="建筑光点" aria-pressed="true"><i data-icon="pin"></i></button>
     <button id="names" aria-label="建筑名称" title="建筑名称" aria-pressed="false"><i data-icon="names"></i></button>
-    <button id="overview" aria-label="全景" title="全景"><i data-icon="layers"></i></button>
+    <button id="overview" aria-label="全景" aria-pressed="false" title="正北朝上查看全景"><i data-icon="layers"></i></button>
   </nav>
   <div class="zoom-controls" hidden>
     <button id="zoom-in" aria-label="拉近视角"><i data-icon="plus"></i></button>
