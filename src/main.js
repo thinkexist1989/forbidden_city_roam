@@ -2,6 +2,7 @@ import {Vector3} from 'three';
 
 import {places, timeline} from './content.js';
 import {icon} from './icons.js';
+import {initMusic} from './music.js';
 import {createScene} from './scene.js';
 
 const $ = q => document.querySelector(q);
@@ -23,6 +24,7 @@ const entries = places.map((place, index) => {
 document.querySelectorAll('[data-icon]').forEach(el => {
   el.innerHTML = icon(el.dataset.icon);
 });
+initMusic();
 
 let scene;
 let exploring = false;
@@ -179,6 +181,7 @@ function showHelp() {
       `<h3>触控漫游</h3><p>单指拖动环绕建筑，双指捏合缩放，双指同向移动平移画面。轻点金色光点即可飞向建筑、阅读档案。</p>
     <h3>鼠标浏览</h3><p>按住左键旋转，滚轮缩放，按住右键平移。将指针移到光点上预览建筑，点击进入详情。</p>
     <h3>找到方向</h3><p>点「全景」查看外朝五处地标。视点重叠时，可在「建筑图录」中按名称选取。「历史年表」可以从事件回到现场。</p>
+    <h3>背景音乐</h3><p>轻点右上角音符或暂停图标可切换播放。鼠标悬停或在平板上长按图标可查看同步歌词，轻点画面收起。</p>
     <h3>键盘操作</h3><p>使用 Tab 切换控件，Enter 激活，Esc 关闭面板。</p>`);
 }
 function togglePanel(key, render) {

@@ -20,10 +20,20 @@
       <div><strong>宫城图志</strong><span>Palace Atlas</span></div>
     </div>
     <div class="header-tools">
+      <div class="music-control">
+        <button id="music" aria-label="播放背景音乐" aria-describedby="music-tip">
+          <i data-icon="music"></i>
+        </button>
+        <div id="music-tip" role="tooltip">
+          <strong>《光亮》</strong><span>周深</span>
+          <p id="lyric">前奏</p>
+        </div>
+      </div>
       <button id="help" class="text-btn"><i data-icon="book"></i><span>操作指南</span></button>
       <button id="full" class="full-btn" aria-label="进入全屏" title="进入全屏"><i data-icon="expand"></i></button>
     </div>
   </header>
+  <audio id="soundtrack" src="./light-zs.mp3" loop preload="metadata"></audio>
   <div id="markers" hidden></div>
   <section class="opening" aria-label="漫游紫禁城序幕">
     <div class="title-frame"><h1>漫游紫禁城</h1><span class="small-seal" aria-hidden="true">故宮</span></div>

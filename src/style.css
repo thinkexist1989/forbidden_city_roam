@@ -975,3 +975,61 @@ footer {
 .ready.intro .title-frame {
   animation: inscription 1.4s ease-out both;
 }
+
+.music-control {
+  position: relative;
+}
+
+#music {
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--lightshade);
+  color: var(--bright);
+}
+
+#music.playing {
+  color: var(--gold);
+}
+
+#music-tip {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: min(270px, 80vw);
+  padding: 12px 16px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+#music-tip strong {
+  font-family: var(--serif);
+  color: var(--gold);
+}
+
+#music-tip span {
+  margin-left: 8px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+#lyric {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+.music-control.mouse-hover #music-tip,
+.music-control.show-tip #music-tip,
+#music:focus-visible + #music-tip {
+  display: block;
+}
+
+header:has(.music-control.mouse-hover), header:has(.music-control.show-tip), header:has(#music:focus-visible) {
+  z-index: 7;
+}
