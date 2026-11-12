@@ -141,8 +141,10 @@ export async function createScene(canvas, onView, onProgress, onFailure) {
     const changed = controls.update();
     if (dirty || changed || animation) {
       dirty = false;
+      const distance = camera.position.distanceTo(controls.target);
+      scene.fog.density = 0.00105 * Math.min(1, 310 / distance);
       renderer.render(scene, camera);
-      onView(camera, controls.getAzimuthalAngle());
+      onView(camera, controls.getAzimuthalAngle(), distance);
     }
     if (animation && !flight)
       animation.arrive?.();
@@ -224,9 +226,11 @@ export async function createScene(canvas, onView, onProgress, onFailure) {
       travel(eye, target, 950, 18, arrive);
     },
     overview() {
-      const distance = Math.max(1, 1 / camera.aspect);
-      const target = vector([-166, 3, -2150]);
-      const eye = target.clone().add(vector([270, 540, 285]).multiplyScalar(distance));
+      const distance = Math.max(1, 0.85 / camera.aspect);
+      const target = vector([-166, 3, -2360]);
+      // A landscape tablet has room for the long city axis from left to right.
+      const offset = camera.aspect > 1.2 ? [410, 1150, 95] : [55, 1410, 290];
+      const eye = target.clone().add(vector(offset).multiplyScalar(distance));
       travel(eye, target, 1100, 35);
     },
     zoom(factor) {

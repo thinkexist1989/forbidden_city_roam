@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#1b211f">
   <meta name="description" content="从太和殿全景开始，漫游紫禁城三维模型，探访外朝建筑与六百年宫城历史。">
   <link rel="stylesheet" href="./src/style.css">
+  <link rel="preload" href="./media/palace-song.woff2" as="font" type="font/woff2" crossorigin>
   <title>漫游紫禁城 · 宫城图志</title>
   <link rel="icon" type="image/svg+xml" href="./media/seal.svg">
 </head>
@@ -24,6 +25,7 @@
         <button id="music" aria-label="播放背景音乐" aria-describedby="music-tip">
           <i data-icon="music"></i>
         </button>
+        <span id="music-unlock" hidden>轻触画面开启音乐</span>
         <div id="music-tip" role="tooltip">
           <strong>《光亮》</strong><span>周深</span>
           <p id="lyric">前奏</p>
@@ -33,7 +35,7 @@
       <button id="full" class="full-btn" aria-label="进入全屏" title="进入全屏"><i data-icon="expand"></i></button>
     </div>
   </header>
-  <audio id="soundtrack" src="./light-zs.mp3" loop preload="metadata"></audio>
+  <audio id="soundtrack" src="./light-zs.mp3" autoplay loop preload="auto"></audio>
   <div id="markers" hidden></div>
   <section class="opening" aria-label="漫游紫禁城序幕">
     <div class="title-frame"><h1>漫游紫禁城</h1><span class="small-seal" aria-hidden="true">故宮</span></div>
@@ -48,11 +50,12 @@
   </div>
   <div id="bearing" class="bearing" aria-label="指北针"><span>北</span><div class="dial"><div class="needle"></div></div></div>
   <nav class="explore-nav" aria-label="漫游工具" hidden>
-    <button id="index"><i data-icon="atlas"></i>建筑图录</button>
-    <button id="history"><i data-icon="clock"></i>历史年表</button>
+    <button id="index" aria-label="建筑图录" title="建筑图录"><i data-icon="atlas"></i></button>
+    <button id="history" aria-label="历史年表" title="历史年表"><i data-icon="clock"></i></button>
     <b aria-hidden="true"></b>
-    <button id="labels" aria-pressed="true"><i data-icon="pin"></i>标注</button>
-    <button id="overview"><i data-icon="layers"></i>全景</button>
+    <button id="labels" aria-label="建筑光点" title="建筑光点" aria-pressed="true"><i data-icon="pin"></i></button>
+    <button id="names" aria-label="建筑名称" title="建筑名称" aria-pressed="false"><i data-icon="names"></i></button>
+    <button id="overview" aria-label="全景" title="全景"><i data-icon="layers"></i></button>
   </nav>
   <div class="zoom-controls" hidden>
     <button id="zoom-in" aria-label="拉近视角"><i data-icon="plus"></i></button>

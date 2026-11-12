@@ -1,6 +1,12 @@
+import {gardenArchives} from './places-garden.js';
+import {specialPlaces} from './places-special.js';
+import {outerPlaces} from './places-outer.js';
+import {wingPlaces} from './places-wings.js';
+import {innerPlaces} from './places-inner.js';
+
 const buildingPage = code => 'https://www.dpm.org.cn/explore/building/' + code + '.html';
 
-export const places = [
+const outerAxis = [
   {
     id: 'wumen',
     name: '午门',
@@ -84,13 +90,23 @@ export const places = [
   }
 ];
 
+export const places = [...outerAxis, ...outerPlaces, ...innerPlaces, ...wingPlaces, ...gardenArchives, ...specialPlaces];
+
+const linkedEvents = [
+  'wenhua', 'wuying', 'taihemen', 'jingren', 'kunning', 'taihe', 'qianqingmen',
+  'nanshufang', 'qianqing', 'shoukang', 'yuhua', 'chizao', 'wenyuan', 'baohe',
+  'longzongmen', 'chuxiu', 'xihua', 'shenwu', 'wumen'
+].map(id => {
+  const place = places.find(item => item.id === id);
+  const year = Number(place.year);
+  const era = id === 'wuying' ? '明清之际' : year < 1644 ? '明' : year < 1912 ? '清' : year < 1949 ? '近代' : '当代';
+  return [year, era, place.person, place.story, id];
+});
+
 export const timeline = [
   [1406, '明', '永乐营建', '明成祖朱棣下诏营建北京宫殿，工程由此展开。'],
   [1420, '明', '紫禁城建成', '永乐十八年，北京宫殿建成，中轴线上形成层层递进的宫廷空间。'],
-  [1644, '清', '皇极门颁诏', places[1].story, 'taihemen'],
-  [1667, '清', '康熙帝亲政', places[2].story, 'taihe'],
-  [1789, '清', '保和殿殿试', places[4].story, 'baohe'],
+  ...linkedEvents,
   [1925, '近代', '故宫博物院成立', '10月10日，故宫博物院开院，宫殿和收藏向公众开放。'],
-  [1987, '当代', '列入世界遗产', '北京故宫列入《世界遗产名录》。'],
-  [2020, '当代', '建成六百年', places[0].story, 'wumen']
-];
+  [1987, '当代', '列入世界遗产', '北京故宫列入《世界遗产名录》。']
+].sort((a, b) => a[0] - b[0]);

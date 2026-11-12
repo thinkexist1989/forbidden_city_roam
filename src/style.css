@@ -7,6 +7,12 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: PalaceSong;
+  src: url('/media/palace-song.woff2') format('woff2');
+  font-display: swap;
+}
+
 :root {
   color-scheme: dark;
   --ink: #17201e;
@@ -348,7 +354,7 @@ h1 {
 }
 
 .vantage strong {
-  font: 500 27px/1.6 var(--serif);
+  font: normal 27px/1.6 PalaceSong, var(--serif);
 }
 
 .vantage em {
@@ -523,6 +529,7 @@ footer {
 }
 
 .leader {
+  transform-origin: left center;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -1033,3 +1040,68 @@ footer {
 header:has(.music-control.mouse-hover), header:has(.music-control.show-tip), header:has(#music:focus-visible) {
   z-index: 7;
 }
+
+
+.explore-nav button {
+  justify-content: center;
+  width: 48px;
+  min-height: 48px;
+  padding: 0;
+}
+
+.explore-nav svg { width: 21px; height: 21px; }
+.hide-points .point, .roof-name { display: none; }
+.show-names .point { width: 7px; height: 7px; border-width: 1px; }
+.show-names .point:after { inset: -5px; }
+.show-names .leader { opacity: .55; }
+.show-names .roof-name {
+  display: block;
+  position: absolute;
+  bottom: calc(50% + 9px);
+  left: 50%;
+  transform: translateX(-50%);
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+  font: normal clamp(15px,1.6vw,19px)/1.05 var(--kai);
+  letter-spacing: .04em;
+  color: var(--bright);
+  text-shadow: 0 1px 2px var(--ink), 1px 0 3px var(--ink), 0 0 6px var(--ink);
+}
+.marker:hover, .marker:focus-visible { z-index: 3; }
+.marker:hover .marker-preview, .marker:focus-visible .marker-preview { z-index: 1; }
+.catalog-search { display: grid; gap: 6px; margin-bottom: 14px; font-size: 13px; }
+.catalog-search input {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 16px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+.catalog-search input:focus-visible { outline: 2px solid var(--gold); }
+#music-unlock {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  white-space: nowrap;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: var(--glass);
+  color: var(--bright);
+  font-size: 12px;
+  pointer-events: none;
+}
+.exploring #music-unlock, .music-control.mouse-hover #music-unlock, .music-control.show-tip #music-unlock { display: none; }
+@media(max-width:700px) { #music-unlock { right: auto; left: 50%; transform: translateX(-50%); } }
+
+.related-places { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.related-places button {
+  color: var(--gold);
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.vantage-caption span { font-family: var(--sans), PalaceSong; }

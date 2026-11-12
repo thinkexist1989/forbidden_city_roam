@@ -11,6 +11,7 @@ export function initMusic() {
   const control = document.querySelector('.music-control');
   const button = document.querySelector('#music');
   const lyric = document.querySelector('#lyric');
+  const unlockHint = document.querySelector('#music-unlock');
 
   function syncLyric() {
     let line = '前奏';
@@ -31,21 +32,27 @@ export function initMusic() {
 
   function play() {
     if (audio.error) audio.load();
-    audio.play().catch(() => {
+    audio.play().catch(error => {
+      if (error.name === 'NotAllowedError' && !audio.error && audio.paused) unlockHint.hidden = false;
       syncButton();
       syncLyric();
     });
   }
 
-  // On Android the first tap may be the browser's permission to start sound.
+  // A touch on the canvas can end without a click when OrbitControls captures the pointer.
   function unlock(event) {
     if (!control.contains(event.target) && audio.paused) play();
   }
   function stopUnlock() {
+    unlockHint.hidden = true;
+    document.removeEventListener('pointerup', unlock, true);
     document.removeEventListener('click', unlock, true);
   }
-  document.addEventListener('click', unlock, true);
-  audio.addEventListener('playing', stopUnlock, {once: true});
+  if (audio.paused) {
+    document.addEventListener('pointerup', unlock, true);
+    document.addEventListener('click', unlock, true);
+    audio.addEventListener('playing', stopUnlock, {once: true});
+  }
   for (const event of ['play', 'pause', 'error']) audio.addEventListener(event, syncButton);
   for (const event of ['timeupdate', 'seeked', 'loadedmetadata', 'error']) {
     audio.addEventListener(event, syncLyric);
@@ -80,5 +87,6 @@ export function initMusic() {
   document.addEventListener('pointerdown', event => {
     if (!control.contains(event.target)) control.classList.remove('show-tip');
   }, true);
-  play();
+  syncButton();
+  if (audio.paused) play();
 }

@@ -1,4 +1,5 @@
 const paths = {
+  names: '<path d="M5 6h14v4M5 6v4m7-7v3M8 11h8l-4 4v5h-3M5 16h14"/>',
   music: '<path d="M9 17V6l11-3v11M9 9l11-3"/><ellipse cx="6" cy="18" rx="3" ry="2"/><ellipse cx="17" cy="15" rx="3" ry="2"/>',
   pause: '<path d="M8 5v14M16 5v14" stroke-width="3"/>',
   book: '<path d="M3 5c4-1 6 0 9 2 3-2 5-3 9-2v14c-4-1-7 0-9 2-2-2-5-3-9-2zM12 7v14"/>',
