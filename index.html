@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#1b211f">
+  <meta name="description" content="从太和殿全景开始，漫游紫禁城三维模型，探访外朝建筑与六百年宫城历史。">
+  <link rel="stylesheet" href="./src/style.css">
+  <title>漫游紫禁城 · 宫城图志</title>
+  <link rel="icon" type="image/svg+xml" href="./media/seal.svg">
+</head>
+<body>
+<main id="app" class="intro">
+  <div class="poster" aria-hidden="true"></div>
+  <canvas id="world" aria-label="紫禁城三维漫游场景"></canvas>
+  <div class="shade" aria-hidden="true"></div>
+  <header>
+    <div class="brand">
+      <img src="./media/seal.svg" width="43" height="43" alt="">
+      <div><strong>宫城图志</strong><span>Palace Atlas</span></div>
+    </div>
+    <div class="header-tools">
+      <button id="help" class="text-btn"><i data-icon="book"></i><span>操作指南</span></button>
+      <button id="full" class="full-btn" aria-label="进入全屏" title="进入全屏"><i data-icon="expand"></i></button>
+    </div>
+  </header>
+  <div id="markers" hidden></div>
+  <section class="opening" aria-label="漫游紫禁城序幕">
+    <div class="title-frame"><h1>漫游紫禁城</h1><span class="small-seal" aria-hidden="true">故宮</span></div>
+    <div class="english-title" lang="en">Roaming the Forbidden City</div>
+    <div class="ornament" aria-hidden="true"><span></span>◇<span></span></div>
+    <button id="enter" class="entry-btn"><i data-icon="compass"></i><span>开始漫游</span><i data-icon="arrow"></i></button>
+    <div id="loading" role="status">正在载入宫城…</div>
+  </section>
+  <div class="vantage">
+    <div class="vantage-caption"><i data-icon="pin"></i><span>当前视点</span></div>
+    <strong id="view-name">太和殿全景</strong><em id="view-en" lang="en">Hall of Supreme Harmony</em>
+  </div>
+  <div id="bearing" class="bearing" aria-label="指北针"><span>北</span><div class="dial"><div class="needle"></div></div></div>
+  <nav class="explore-nav" aria-label="漫游工具" hidden>
+    <button id="index"><i data-icon="atlas"></i>建筑图录</button>
+    <button id="history"><i data-icon="clock"></i>历史年表</button>
+    <b aria-hidden="true"></b>
+    <button id="labels" aria-pressed="true"><i data-icon="pin"></i>标注</button>
+    <button id="overview"><i data-icon="layers"></i>全景</button>
+  </nav>
+  <div class="zoom-controls" hidden>
+    <button id="zoom-in" aria-label="拉近视角"><i data-icon="plus"></i></button>
+    <button id="zoom-out" aria-label="拉远视角"><i data-icon="minus"></i></button>
+  </div>
+  <footer><span class="location">北京故宫</span><span>本程序由Yang Luo开发</span><span class="coordinates">39°55′ N &nbsp; 116°24′ E</span></footer>
+  <aside id="panel" hidden aria-labelledby="panel-title">
+    <div class="panel-head"><h2 id="panel-title" tabindex="-1"></h2><button id="close" aria-label="关闭面板"><i data-icon="close"></i></button></div>
+    <div id="panel-body"></div>
+  </aside>
+  <div id="notice" role="status" hidden></div>
+</main>
+<noscript>请启用 JavaScript 以载入三维场景。</noscript>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
