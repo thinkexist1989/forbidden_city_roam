@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.3'
+    }
+}
+
+apply plugin: 'com.android.application'
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+def webAssets = file("$buildDir/generated/palaceAssets")
+android {
+    compileSdkVersion 31
+    defaultConfig {
+        applicationId 'com.yangluo.forbiddencity'
+        minSdkVersion 24
+        targetSdkVersion 31
+        versionCode 1
+        versionName '0.1.0'
+    }
+    sourceSets.main.assets.srcDir webAssets
+    aaptOptions.noCompress 'glb', 'mp3'
+}
+
+tasks.register('buildPalaceWeb', Exec) {
+    workingDir rootDir.parentFile
+    inputs.files(fileTree('..') {
+        include 'src/**', 'public/**', 'textures/**', 'index.html', 'vite.config.js',
+                'forbidden_city.glb', 'light-zs.mp3', 'package*.json'
+    })
+    outputs.dir webAssets
+    inputs.files('../LICENSE', '../node_modules/three/LICENSE')
+    commandLine 'npm', 'run', 'build', '--', '--outDir', webAssets, '--emptyOutDir'
+    doLast {
+        copy {
+            from '../LICENSE'
+            into new File(webAssets, 'licenses/palace')
+        }
+        copy {
+            from '../node_modules/three/LICENSE'
+            into new File(webAssets, 'licenses/three')
+        }
+    }
+}
+preBuild.dependsOn buildPalaceWeb
